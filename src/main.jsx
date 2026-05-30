@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react";
+import confetti from "canvas-confetti";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Moon,
@@ -15,6 +16,77 @@ const STORAGE_KEYS = {
   rounds: "balootna-rounds",
   theme: "balootna-theme"
 };
+const CONFETTI_COLORS = ["#111827", "#dc2626", "#ffffff", "#f59e0b"];
+
+function clearConfettiTimers(timerRef) {
+  timerRef.current.forEach((timerId) => window.clearTimeout(timerId));
+  timerRef.current = [];
+}
+
+function stopConfetti(timerRef) {
+  clearConfettiTimers(timerRef);
+  confetti.reset?.();
+}
+
+function fireWinConfetti(timerRef) {
+  stopConfetti(timerRef);
+
+  const fire = (delay, options) => {
+    const timerId = window.setTimeout(() => {
+      confetti({
+        colors: CONFETTI_COLORS,
+        decay: 0.91,
+        gravity: 0.95,
+        ticks: 80,
+        ...options
+      });
+    }, delay);
+
+    timerRef.current.push(timerId);
+  };
+
+  fire(0, {
+    particleCount: 34,
+    angle: 58,
+    spread: 56,
+    startVelocity: 42,
+    origin: { x: 0.08, y: 0.72 }
+  });
+  fire(0, {
+    particleCount: 34,
+    angle: 122,
+    spread: 56,
+    startVelocity: 42,
+    origin: { x: 0.92, y: 0.72 }
+  });
+  fire(350, {
+    particleCount: 28,
+    spread: 70,
+    startVelocity: 34,
+    origin: { x: 0.5, y: 0.62 }
+  });
+  fire(720, {
+    particleCount: 18,
+    angle: 65,
+    spread: 48,
+    startVelocity: 34,
+    origin: { x: 0.12, y: 0.76 }
+  });
+  fire(720, {
+    particleCount: 18,
+    angle: 115,
+    spread: 48,
+    startVelocity: 34,
+    origin: { x: 0.88, y: 0.76 }
+  });
+  fire(980, {
+    particleCount: 16,
+    spread: 62,
+    startVelocity: 28,
+    scalar: 0.9,
+    origin: { x: 0.5, y: 0.68 }
+  });
+}
 
 function readStoredRounds() {
   try {
@@ -60,6 +132,10 @@ function App() {
   const [theme, setTheme] = useState(readStoredTheme);
   const [form, setForm] = useState({ us: "", them: "" });
   const [error, setError] = useState("");
+  const [highlightedRoundId, setHighlightedRoundId] = useState("");
+  const confettiTimersRef = useRef([]);
+  const hasCheckedInitialWinnerRef = useRef(false);
+  const previousWinnerRef = useRef(null);
 
   const totals = useMemo(
     () =>
@@ -82,6 +158,16 @@ function App() {
   const isGameFinished = Boolean(winner);
   const leadingTeam =
     totals.us === totals.them ? null : totals.us > totals.them ? "us" : "them";
+  const displayedRounds = useMemo(
+    () =>
+      rounds
+        .map((round, index) => ({
+          ...round,
+          roundNumber: index + 1
+        }))
+        .reverse(),
+    [rounds]
+  );
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.rounds, JSON.stringify(rounds));
@@ -91,6 +177,39 @@ function App() {
     document.documentElement.classList.toggle("dark", theme === "dark");
     localStorage.setItem(STORAGE_KEYS.theme, theme);
   }, [theme]);
+
+  useEffect(() => {
+    if (!hasCheckedInitialWinnerRef.current) {
+      hasCheckedInitialWinnerRef.current = true;
+      previousWinnerRef.current = winner;
+      return;
+    }
+
+    if (winner === "us" && previousWinnerRef.current !== "us") {
+      fireWinConfetti(confettiTimersRef);
+    }
+
+    previousWinnerRef.current = winner;
+  }, [winner]);
+
+  useEffect(() => {
+    if (!highlightedRoundId) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setHighlightedRoundId("");
+    }, 1000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [highlightedRoundId]);
+
+  useEffect(
+    () => () => {
+      stopConfetti(confettiTimersRef);
+    },
+    []
+  );
 
   function updateField(field, value) {
     setError("");
@@ -115,14 +234,14 @@ function App() {
       return;
     }
 
-    setRounds((currentRounds) => [
-      ...currentRounds,
-      {
-        id: crypto.randomUUID(),
-        us: us ?? 0,
-        them: them ?? 0
-      }
-    ]);
+    const round = {
+      id: crypto.randomUUID(),
+      us: us ?? 0,
+      them: them ?? 0
+    };
+
+    setRounds((currentRounds) => [...currentRounds, round]);
+    setHighlightedRoundId(round.id);
     setForm({ us: "", them: "" });
     setError("");
   }
@@ -133,18 +252,28 @@ function App() {
   }
 
   function newGame() {
+    const shouldReset = window.confirm(
+      "هل تريد بدء لعبة جديدة؟ سيتم حذف سجل الصكات الحالي."
+    );
+
+    if (!shouldReset) {
+      return;
+    }
+
+    stopConfetti(confettiTimersRef);
     setRounds([]);
     setForm({ us: "", them: "" });
     setError("");
+    setHighlightedRoundId("");
   }
 
   return (
     <main
-      className="app-root h-[100dvh] bg-zinc-50 text-zinc-950 transition-colors duration-300 dark:bg-zinc-950 dark:text-zinc-50"
+      className="app-root min-h-[100dvh] bg-zinc-50 text-zinc-950 transition-colors duration-300 dark:bg-zinc-950 dark:text-zinc-50"
       dir="rtl"
       lang="ar"
     >
-      <div className="app-shell mx-auto flex h-full w-full max-w-xl flex-col overflow-hidden px-3 py-2.5 sm:px-6 sm:py-6">
+      <div className="app-shell mx-auto flex h-full w-full max-w-xl flex-col overflow-hidden px-3 py-2 sm:px-6 sm:py-5">
         <header className="app-header mb-2 flex items-center justify-between gap-3">
           <h1 className="app-title font-bold tracking-normal">
             صكتي
@@ -258,7 +387,7 @@ function App() {
             </button>
 
             <button
-              className="secondary-button"
+              className="secondary-button reset-button"
               type="button"
               onClick={newGame}
               disabled={rounds.length === 0 && form.us === "" && form.them === ""}
@@ -283,14 +412,19 @@ function App() {
             </div>
           ) : (
             <ol className="history-list min-h-0 flex-1 space-y-2 overflow-y-auto pb-2">
-              {rounds.map((round, index) => (
+              {displayedRounds.map((round) => (
                 <li
-                  className="history-row flex items-center justify-between gap-3 rounded-lg border border-zinc-200 bg-white px-3 py-2 font-semibold shadow-sm transition-colors duration-300 dark:border-zinc-800 dark:bg-zinc-900"
+                  className={[
+                    "history-row flex items-center justify-between gap-3 rounded-lg border border-zinc-200 bg-white px-3 py-2 font-semibold shadow-sm transition-colors duration-300 dark:border-zinc-800 dark:bg-zinc-900",
+                    round.id === highlightedRoundId ? "history-row-new" : ""
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
                   key={round.id}
                   dir="rtl"
                 >
                   <span className="shrink-0 text-zinc-500 dark:text-zinc-400">
-                    الصكة {index + 1}
+                    الصكة {round.roundNumber}
                   </span>
                   <span className="text-left text-zinc-950 dark:text-zinc-50">
                     لنا {round.us} - لهم {round.them}

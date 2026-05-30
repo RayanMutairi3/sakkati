@@ -16,6 +16,8 @@
   body {
     margin: 0;
     min-width: 320px;
+    min-height: 100dvh;
+    overflow: hidden;
     font-family: "IBM Plex Arabic", "IBM Plex Sans Arabic", system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -50,29 +52,39 @@
     @apply inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 px-3 text-sm font-bold text-zinc-800 transition hover:border-accent-500 hover:text-accent-700 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-45 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100 dark:hover:border-accent-500 dark:hover:text-accent-100 sm:h-14 sm:gap-2 sm:px-4 sm:text-base;
   }
 
+  .reset-button {
+    @apply border-zinc-200 bg-white text-zinc-500 hover:border-red-300 hover:bg-red-50 hover:text-red-700 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400 dark:hover:border-red-800 dark:hover:bg-red-950/25 dark:hover:text-red-200;
+  }
+
   .history-toggle {
     @apply inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 text-sm font-bold text-zinc-700 transition hover:border-accent-500 hover:text-accent-700 active:scale-[0.99] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:border-accent-500 dark:hover:text-accent-100;
   }
 }
 
 .app-root {
+  min-height: 100dvh;
   height: 100dvh;
-  min-height: 100svh;
   overflow: hidden;
 }
 
 .app-shell {
-  height: 100%;
+  height: 100dvh;
   min-height: 0;
 }
 
+.app-header,
+.score-form {
+  flex-shrink: 0;
+}
+
 .app-title {
-  font-size: clamp(1.25rem, 5.3vw, 1.75rem);
+  font-size: clamp(1.18rem, 5vw, 1.65rem);
   line-height: 1.15;
 }
 
 .score-card {
   min-height: 0;
+  padding: clamp(0.45rem, 1.8vh, 0.7rem);
 }
 
 .team-label {
@@ -82,11 +94,13 @@
 
 .score-number {
   font-size: clamp(2.2rem, 11.5vw, 2.9rem);
+  margin-top: clamp(0.2rem, 0.8vh, 0.45rem);
 }
 
 .remaining-text {
   font-size: clamp(0.7rem, 3vw, 0.82rem);
   line-height: 1.2;
+  margin-top: clamp(0.2rem, 0.7vh, 0.4rem);
 }
 
 .winner-alert {
@@ -98,10 +112,20 @@
   line-height: 1.15;
 }
 
+.history-section {
+  min-height: 0;
+}
+
 .history-list {
   direction: rtl;
+  flex: 1 1 auto;
+  min-height: 0;
   max-height: 100%;
+  margin: 0;
+  padding-inline-start: 0;
+  list-style: none;
   overscroll-behavior: contain;
+  overflow-y: auto;
   scrollbar-width: thin;
 }
 
@@ -109,6 +133,38 @@
   font-size: clamp(0.88rem, 3.7vw, 1rem);
   line-height: 1.35;
   min-height: 2.45rem;
+}
+
+.history-row-new {
+  animation: newest-round-highlight 1s ease-out;
+}
+
+@keyframes newest-round-highlight {
+  0% {
+    background-color: rgb(236 253 245);
+    border-color: rgb(52 211 153);
+  }
+
+  100% {
+    background-color: inherit;
+    border-color: inherit;
+  }
+}
+
+.dark .history-row-new {
+  animation-name: newest-round-highlight-dark;
+}
+
+@keyframes newest-round-highlight-dark {
+  0% {
+    background-color: rgb(6 78 59 / 0.45);
+    border-color: rgb(16 185 129 / 0.75);
+  }
+
+  100% {
+    background-color: inherit;
+    border-color: inherit;
+  }
 }
 
 @media (max-width: 430px) {
@@ -126,7 +182,7 @@
 
   .score-form {
     margin-top: 0.4rem;
-    padding: 0.5rem;
+    padding: 0.45rem;
   }
 
   .winner-alert {
@@ -145,7 +201,7 @@
 
   .primary-button {
     height: 2.55rem;
-    margin-top: 0.5rem;
+    margin-top: 0.45rem;
     font-size: 0.95rem;
   }
 
