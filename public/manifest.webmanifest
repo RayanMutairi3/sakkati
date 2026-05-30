@@ -1,0 +1,11 @@
+{
+  "name": "صكتي",
+  "short_name": "صكتي",
+  "lang": "ar",
+  "dir": "rtl",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/",
+  "theme_color": "#059669",
+  "background_color": "#fafafa"
+}
