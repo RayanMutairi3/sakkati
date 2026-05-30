@@ -35,9 +35,9 @@ function fireWinConfetti(timerRef) {
     const timerId = window.setTimeout(() => {
       confetti({
         colors: CONFETTI_COLORS,
-        decay: 0.91,
-        gravity: 0.95,
-        ticks: 80,
+        decay: 0.92,
+        gravity: 0.82,
+        ticks: 115,
         ...options
       });
     }, delay);
@@ -46,45 +46,68 @@ function fireWinConfetti(timerRef) {
   };
 
   fire(0, {
-    particleCount: 34,
+    particleCount: 28,
     angle: 58,
-    spread: 56,
-    startVelocity: 42,
+    spread: 52,
+    startVelocity: 38,
     origin: { x: 0.08, y: 0.72 }
   });
   fire(0, {
-    particleCount: 34,
+    particleCount: 28,
     angle: 122,
-    spread: 56,
-    startVelocity: 42,
+    spread: 52,
+    startVelocity: 38,
     origin: { x: 0.92, y: 0.72 }
   });
-  fire(350, {
-    particleCount: 28,
+  fire(650, {
+    particleCount: 22,
     spread: 70,
-    startVelocity: 34,
+    startVelocity: 30,
     origin: { x: 0.5, y: 0.62 }
   });
-  fire(720, {
-    particleCount: 18,
+  fire(1400, {
+    particleCount: 16,
     angle: 65,
-    spread: 48,
-    startVelocity: 34,
+    spread: 46,
+    startVelocity: 30,
     origin: { x: 0.12, y: 0.76 }
   });
-  fire(720, {
-    particleCount: 18,
+  fire(1400, {
+    particleCount: 16,
     angle: 115,
-    spread: 48,
-    startVelocity: 34,
+    spread: 46,
+    startVelocity: 30,
     origin: { x: 0.88, y: 0.76 }
   });
-  fire(980, {
-    particleCount: 16,
+  fire(2300, {
+    particleCount: 20,
     spread: 62,
     startVelocity: 28,
     scalar: 0.9,
     origin: { x: 0.5, y: 0.68 }
+  });
+  fire(3300, {
+    particleCount: 14,
+    angle: 62,
+    spread: 44,
+    startVelocity: 28,
+    scalar: 0.9,
+    origin: { x: 0.1, y: 0.78 }
+  });
+  fire(3300, {
+    particleCount: 14,
+    angle: 118,
+    spread: 44,
+    startVelocity: 28,
+    scalar: 0.9,
+    origin: { x: 0.9, y: 0.78 }
+  });
+  fire(4400, {
+    particleCount: 16,
+    spread: 58,
+    startVelocity: 24,
+    scalar: 0.85,
+    origin: { x: 0.5, y: 0.7 }
   });
 }
 
@@ -133,6 +156,7 @@ function App() {
   const [form, setForm] = useState({ us: "", them: "" });
   const [error, setError] = useState("");
   const [highlightedRoundId, setHighlightedRoundId] = useState("");
+  const [isNewGameModalOpen, setIsNewGameModalOpen] = useState(false);
   const confettiTimersRef = useRef([]);
   const hasCheckedInitialWinnerRef = useRef(false);
   const previousWinnerRef = useRef(null);
@@ -211,6 +235,22 @@ function App() {
     []
   );
 
+  useEffect(() => {
+    if (!isNewGameModalOpen) {
+      return undefined;
+    }
+
+    function closeOnEscape(event) {
+      if (event.key === "Escape") {
+        setIsNewGameModalOpen(false);
+      }
+    }
+
+    window.addEventListener("keydown", closeOnEscape);
+
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [isNewGameModalOpen]);
+
   function updateField(field, value) {
     setError("");
     setForm((currentForm) => ({
@@ -252,19 +292,17 @@ function App() {
   }
 
   function newGame() {
-    const shouldReset = window.confirm(
-      "هل تريد بدء لعبة جديدة؟ سيتم حذف سجل الصكات الحالي."
-    );
+    stopConfetti(confettiTimersRef);
+    setIsNewGameModalOpen(true);
+  }
 
-    if (!shouldReset) {
-      return;
-    }
-
+  function confirmNewGame() {
     stopConfetti(confettiTimersRef);
     setRounds([]);
     setForm({ us: "", them: "" });
     setError("");
     setHighlightedRoundId("");
+    setIsNewGameModalOpen(false);
   }
 
   return (
@@ -435,6 +473,47 @@ function App() {
           )}
         </section>
       </div>
+
+      {isNewGameModalOpen && (
+        <div
+          className="modal-backdrop"
+          onClick={() => setIsNewGameModalOpen(false)}
+          role="presentation"
+        >
+          <section
+            aria-labelledby="new-game-title"
+            aria-describedby="new-game-description"
+            aria-modal="true"
+            className="confirm-modal"
+            dir="rtl"
+            role="dialog"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h2 id="new-game-title" className="confirm-modal-title">
+              بدء لعبة جديدة؟
+            </h2>
+            <p id="new-game-description" className="confirm-modal-description">
+              سيتم حذف سجل الصكات الحالي وتصفير النقاط.
+            </p>
+            <div className="confirm-modal-actions">
+              <button
+                className="modal-cancel-button"
+                type="button"
+                onClick={() => setIsNewGameModalOpen(false)}
+              >
+                إلغاء
+              </button>
+              <button
+                className="modal-confirm-button"
+                type="button"
+                onClick={confirmNewGame}
+              >
+                تأكيد البدء
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
     </main>
   );
 }
