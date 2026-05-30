@@ -17,6 +17,22 @@ const STORAGE_KEYS = {
   theme: "balootna-theme"
 };
 const CONFETTI_COLORS = ["#111827", "#dc2626", "#ffffff", "#f59e0b"];
+const SUIT_THEMES = [
+  { name: "spade", symbol: "♠", tone: "black" },
+  { name: "heart", symbol: "♥", tone: "red" },
+  { name: "club", symbol: "♣", tone: "black" },
+  { name: "diamond", symbol: "♦", tone: "red" }
+];
+const TEAM_SUIT_PAIRS = [
+  {
+    us: { name: "heart", symbol: "♥", tone: "red" },
+    them: { name: "spade", symbol: "♠", tone: "black" }
+  },
+  {
+    us: { name: "diamond", symbol: "♦", tone: "red" },
+    them: { name: "club", symbol: "♣", tone: "black" }
+  }
+];
 
 function clearConfettiTimers(timerRef) {
   timerRef.current.forEach((timerId) => window.clearTimeout(timerId));
@@ -192,6 +208,9 @@ function App() {
         .reverse(),
     [rounds]
   );
+  const suitIndex = Math.max(rounds.length - 1, 0) % SUIT_THEMES.length;
+  const activeSuit = SUIT_THEMES[suitIndex];
+  const teamSuits = TEAM_SUIT_PAIRS[suitIndex % TEAM_SUIT_PAIRS.length];
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.rounds, JSON.stringify(rounds));
@@ -307,13 +326,16 @@ function App() {
 
   return (
     <main
-      className="app-root min-h-[100dvh] bg-zinc-50 text-zinc-950 transition-colors duration-300 dark:bg-zinc-950 dark:text-zinc-50"
+      className="app-root min-h-[100dvh] text-zinc-950 transition-colors duration-300 dark:text-zinc-50"
       dir="rtl"
       lang="ar"
     >
       <div className="app-shell mx-auto flex h-full w-full max-w-xl flex-col overflow-hidden px-3 py-2 sm:px-6 sm:py-5">
         <header className="app-header mb-2 flex items-center justify-between gap-3">
-          <h1 className="app-title font-bold tracking-normal">
+          <h1 className="app-title brand-title font-bold tracking-normal">
+            <span className="brand-suit" aria-hidden="true">
+              {activeSuit.symbol}
+            </span>
             صكتي
           </h1>
 
@@ -338,12 +360,14 @@ function App() {
             score={totals.us}
             remaining={Math.max(WINNING_SCORE - totals.us, 0)}
             isLeading={leadingTeam === "us"}
+            suit={teamSuits.us}
           />
           <ScoreCard
             label="لهم"
             score={totals.them}
             remaining={Math.max(WINNING_SCORE - totals.them, 0)}
             isLeading={leadingTeam === "them"}
+            suit={teamSuits.them}
           />
         </section>
 
@@ -351,9 +375,7 @@ function App() {
           <section
             className={[
               "winner-alert mt-2 flex flex-col items-center justify-center rounded-lg border px-3 py-1.5 text-center shadow-sm",
-              winner === "us"
-                ? "border-green-200 bg-green-50 text-green-800 dark:border-green-800/60 dark:bg-green-950/35 dark:text-green-100"
-                : "border-red-200 bg-red-50 text-red-800 dark:border-red-800/60 dark:bg-red-950/35 dark:text-red-100"
+              winner === "us" ? "winner-alert-win" : "winner-alert-loss"
             ].join(" ")}
           >
             <div className="flex items-center justify-center gap-1.5 text-sm font-bold sm:text-base">
@@ -437,17 +459,27 @@ function App() {
         </form>
 
         <section className="history-section mt-2.5 flex min-h-0 flex-1 flex-col">
-          <div className="mb-2 flex items-center justify-between gap-3">
-            <h2 className="history-title font-bold">سجل الصكات</h2>
-            <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-              {rounds.length} صكة
+          <div className="history-heading mb-2 flex items-center justify-between gap-3">
+            <div className="history-title-wrap">
+              <span className="history-accent-line" aria-hidden="true" />
+              <span
+                className={[
+                  "history-suit",
+                  `suit-${activeSuit.tone}`
+                ].join(" ")}
+                aria-hidden="true"
+              >
+                {activeSuit.symbol}
+              </span>
+              <h2 className="history-title font-bold">سجل الصكات</h2>
+            </div>
+            <span className="history-count">
+              صكة {rounds.length}
             </span>
           </div>
 
           {rounds.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-zinc-300 bg-white px-3 py-3 text-center text-sm font-semibold text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
-              لا توجد صكات بعد
-            </div>
+            <EmptyHistory suit={activeSuit} />
           ) : (
             <ol className="history-list min-h-0 flex-1 space-y-2 overflow-y-auto pb-2">
               {displayedRounds.map((round) => (
@@ -518,32 +550,90 @@ function App() {
   );
 }
 
-function ScoreCard({ label, score, remaining, isLeading }) {
+function ScoreCard({ label, score, remaining, isLeading, suit }) {
   return (
     <article
       className={[
-        "score-card rounded-lg border bg-white p-2.5 text-center shadow-sm transition-all duration-300 dark:bg-zinc-900 sm:p-4",
+        "score-card rounded-lg border p-2.5 text-center shadow-sm transition-all duration-300 sm:p-4",
+        `score-card-${suit.tone}`,
         isLeading
-          ? "border-accent-500 ring-2 ring-accent-500/10 dark:border-accent-500"
-          : "border-zinc-200 dark:border-zinc-800"
+          ? "score-card-leading"
+          : ""
       ].join(" ")}
     >
-      <div className="flex min-h-6 items-center justify-center gap-1.5">
+      <span className="score-card-suit" aria-hidden="true">
+        {suit.symbol}
+      </span>
+      <div className="score-card-content flex min-h-6 items-center justify-center gap-1.5">
         <h2 className="team-label font-bold">{label}</h2>
         {isLeading && (
-          <span className="rounded-full bg-accent-50 px-1.5 py-0.5 text-[11px] font-bold text-accent-700 dark:bg-accent-500/10 dark:text-accent-100">
+          <span className="leading-badge rounded-full px-1.5 py-0.5 text-[11px] font-bold">
             متقدم
           </span>
         )}
       </div>
 
-      <p className="score-number mt-1 font-bold leading-none tabular-nums sm:mt-3">
+      <p className="score-card-content score-number mt-1 font-bold leading-none tabular-nums sm:mt-3">
         {score}
       </p>
-      <p className="remaining-text mt-1.5 font-semibold text-zinc-500 dark:text-zinc-400">
+      <p className="score-card-content remaining-text mt-1.5 font-semibold">
         باقي {label}: {remaining}
       </p>
     </article>
+  );
+}
+
+function EmptyHistory({ suit }) {
+  return (
+    <div className="empty-history">
+      <svg
+        className="empty-history-illustration"
+        viewBox="0 0 180 112"
+        aria-hidden="true"
+      >
+        <rect
+          className="empty-card empty-card-back"
+          x="42"
+          y="16"
+          width="62"
+          height="82"
+          rx="10"
+          transform="rotate(-10 73 57)"
+        />
+        <rect
+          className="empty-card empty-card-front"
+          x="76"
+          y="12"
+          width="62"
+          height="82"
+          rx="10"
+          transform="rotate(8 107 53)"
+        />
+        <path
+          className="empty-card-line"
+          d="M62 77c15 7 33 7 49 0"
+          fill="none"
+          strokeLinecap="round"
+        />
+        <text className="empty-suit empty-suit-red" x="67" y="52">
+          ♥
+        </text>
+        <text className="empty-suit empty-suit-black" x="110" y="51">
+          ♠
+        </text>
+        <text className="empty-suit empty-suit-black empty-suit-small" x="58" y="83">
+          ♣
+        </text>
+        <text className="empty-suit empty-suit-red empty-suit-small" x="122" y="78">
+          ♦
+        </text>
+        <text className="empty-suit empty-suit-gold" x="91" y="84">
+          {suit.symbol}
+        </text>
+      </svg>
+      <p className="empty-history-title">لا توجد صكات بعد</p>
+      <p className="empty-history-helper">أضف أول صكة لبدء اللعب</p>
+    </div>
   );
 }
 

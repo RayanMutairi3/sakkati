@@ -53,7 +53,7 @@
   }
 
   .reset-button {
-    @apply border-zinc-200 bg-white text-zinc-500 hover:border-red-300 hover:bg-red-50 hover:text-red-700 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400 dark:hover:border-red-800 dark:hover:bg-red-950/25 dark:hover:text-red-200;
+    @apply border-red-200 bg-white text-red-700 hover:border-red-300 hover:bg-red-50 hover:text-red-800 dark:border-red-900/60 dark:bg-zinc-950 dark:text-red-200 dark:hover:border-red-700 dark:hover:bg-red-950/25 dark:hover:text-red-100;
   }
 
   .history-toggle {
@@ -73,6 +73,15 @@
   min-height: 100dvh;
   height: 100dvh;
   overflow: hidden;
+  background:
+    linear-gradient(180deg, rgb(250 250 250), rgb(244 244 245));
+  color: rgb(17 17 17);
+}
+
+.dark .app-root {
+  background:
+    linear-gradient(180deg, rgb(11 11 12), rgb(17 18 20));
+  color: rgb(245 245 245);
 }
 
 .app-shell {
@@ -90,38 +99,275 @@
   line-height: 1.15;
 }
 
+.brand-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: rgb(17 17 17);
+}
+
+.dark .brand-title {
+  color: rgb(245 245 245);
+}
+
+.brand-suit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  border: 1px solid rgb(229 231 235);
+  border-radius: 0.45rem;
+  background-color: rgb(255 255 255);
+  color: rgb(193 18 31);
+  font-size: 0.95rem;
+  line-height: 1;
+  box-shadow: 0 2px 10px rgb(17 17 17 / 0.06);
+}
+
+.dark .brand-suit {
+  border-color: rgb(42 42 47);
+  background-color: rgb(31 31 35);
+  color: rgb(248 113 113);
+  box-shadow: 0 2px 12px rgb(0 0 0 / 0.25);
+}
+
 .score-card {
+  position: relative;
+  overflow: hidden;
   min-height: 0;
   padding: clamp(0.45rem, 1.8vh, 0.7rem);
+  border-color: rgb(229 231 235);
+  background-color: rgb(255 255 255);
+  color: rgb(17 17 17);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.9) inset,
+    0 8px 22px rgb(17 17 17 / 0.06);
+}
+
+.dark .score-card {
+  border-color: rgb(42 42 47);
+  background-color: rgb(24 24 27);
+  color: rgb(245 245 245);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.04) inset,
+    0 10px 28px rgb(0 0 0 / 0.24);
+}
+
+.score-card::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0;
+  width: 0.28rem;
+  height: 100%;
+  background-color: rgb(193 18 31);
+  opacity: 0.9;
+}
+
+.score-card-black::before {
+  background-color: rgb(17 24 39);
+}
+
+.dark .score-card-black::before {
+  background-color: rgb(212 212 216);
+  opacity: 0.35;
+}
+
+.score-card-content {
+  position: relative;
+  z-index: 1;
+}
+
+.score-card-suit {
+  position: absolute;
+  inset-inline-end: 0.4rem;
+  bottom: -0.95rem;
+  z-index: 0;
+  color: rgb(17 24 39);
+  font-size: clamp(4rem, 18vw, 5.5rem);
+  font-weight: 800;
+  line-height: 1;
+  opacity: 0.045;
+  transform: rotate(-12deg);
+  pointer-events: none;
+  user-select: none;
+}
+
+.score-card-red .score-card-suit {
+  color: rgb(193 18 31);
+}
+
+.dark .score-card-suit {
+  opacity: 0.06;
+}
+
+.score-card-leading {
+  border-color: rgb(193 18 31);
+  box-shadow:
+    0 0 0 2px rgb(193 18 31 / 0.08),
+    0 10px 26px rgb(193 18 31 / 0.08);
+}
+
+.dark .score-card-leading {
+  border-color: rgb(214 40 57);
+  box-shadow:
+    0 0 0 2px rgb(214 40 57 / 0.14),
+    0 10px 26px rgb(0 0 0 / 0.28);
 }
 
 .team-label {
   font-size: clamp(1rem, 4.1vw, 1.25rem);
   line-height: 1.15;
+  color: rgb(17 17 17);
+}
+
+.dark .team-label {
+  color: rgb(245 245 245);
+}
+
+.leading-badge {
+  border: 1px solid rgb(254 202 202);
+  background-color: rgb(255 241 242);
+  color: rgb(159 18 57);
+}
+
+.dark .leading-badge {
+  border-color: rgb(127 29 29 / 0.72);
+  background-color: rgb(127 29 29 / 0.22);
+  color: rgb(254 202 202);
 }
 
 .score-number {
   font-size: clamp(2.2rem, 11.5vw, 2.9rem);
   margin-top: clamp(0.2rem, 0.8vh, 0.45rem);
+  color: rgb(17 17 17);
+}
+
+.dark .score-number {
+  color: rgb(250 250 250);
 }
 
 .remaining-text {
   font-size: clamp(0.7rem, 3vw, 0.82rem);
   line-height: 1.2;
   margin-top: clamp(0.2rem, 0.7vh, 0.4rem);
+  color: rgb(107 114 128);
+}
+
+.dark .remaining-text {
+  color: rgb(161 161 170);
 }
 
 .winner-alert {
   line-height: 1.25;
 }
 
+.winner-alert-win {
+  border-color: rgb(187 247 208);
+  background: rgb(240 253 244);
+  color: rgb(22 101 52);
+}
+
+.dark .winner-alert-win {
+  border-color: rgb(34 197 94 / 0.34);
+  background: rgb(20 83 45 / 0.22);
+  color: rgb(187 247 208);
+}
+
+.winner-alert-loss {
+  border-color: rgb(254 202 202);
+  background-color: rgb(254 242 242);
+  color: rgb(153 27 27);
+}
+
+.dark .winner-alert-loss {
+  border-color: rgb(127 29 29 / 0.7);
+  background-color: rgb(69 10 10 / 0.3);
+  color: rgb(254 202 202);
+}
+
 .history-title {
   font-size: clamp(0.95rem, 4vw, 1.1rem);
   line-height: 1.15;
+  color: rgb(17 17 17);
+}
+
+.dark .history-title {
+  color: rgb(245 245 245);
 }
 
 .history-section {
   min-height: 0;
+}
+
+.history-heading {
+  flex-shrink: 0;
+}
+
+.history-title-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.history-accent-line {
+  display: block;
+  width: 0.22rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  background-color: rgb(193 18 31);
+}
+
+.history-suit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border: 1px solid rgb(229 231 235);
+  border-radius: 999px;
+  background-color: rgb(255 255 255);
+  font-size: 0.86rem;
+  line-height: 1;
+  box-shadow: 0 2px 8px rgb(17 17 17 / 0.04);
+}
+
+.dark .history-suit {
+  border-color: rgb(42 42 47);
+  background-color: rgb(31 31 35);
+  box-shadow: none;
+}
+
+.suit-red {
+  color: rgb(193 18 31);
+}
+
+.suit-black {
+  color: rgb(17 24 39);
+}
+
+.dark .suit-black {
+  color: rgb(228 228 231);
+}
+
+.history-count {
+  flex-shrink: 0;
+  border: 1px solid rgb(229 231 235);
+  border-radius: 999px;
+  background-color: rgb(255 255 255);
+  padding: 0.18rem 0.55rem;
+  color: rgb(82 82 91);
+  font-size: 0.74rem;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.dark .history-count {
+  border-color: rgb(42 42 47);
+  background-color: rgb(31 31 35);
+  color: rgb(212 212 216);
 }
 
 .history-list {
@@ -141,10 +387,265 @@
   font-size: clamp(0.88rem, 3.7vw, 1rem);
   line-height: 1.35;
   min-height: 2.45rem;
+  border-color: rgb(229 231 235);
+  background-color: rgb(255 255 255);
+  color: rgb(17 17 17);
+}
+
+.dark .history-row {
+  border-color: rgb(42 42 47);
+  background-color: rgb(24 24 27);
+  color: rgb(245 245 245);
 }
 
 .history-row-new {
   animation: newest-round-highlight 1s ease-out;
+}
+
+.empty-history {
+  display: flex;
+  min-height: 8.5rem;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed rgb(209 213 219);
+  border-radius: 0.75rem;
+  background-color: rgb(255 255 255);
+  padding: 1rem 0.75rem;
+  text-align: center;
+  box-shadow: 0 6px 18px rgb(17 17 17 / 0.035);
+}
+
+.dark .empty-history {
+  border-color: rgb(42 42 47);
+  background-color: rgb(24 24 27);
+  box-shadow: none;
+}
+
+.empty-history-illustration {
+  width: min(46vw, 9.5rem);
+  height: auto;
+}
+
+.empty-card {
+  stroke-width: 2;
+}
+
+.empty-card-back {
+  fill: rgb(250 250 250);
+  stroke: rgb(209 213 219);
+}
+
+.empty-card-front {
+  fill: rgb(255 255 255);
+  stroke: rgb(193 18 31);
+}
+
+.empty-card-line {
+  stroke: rgb(245 158 11);
+  stroke-width: 2.2;
+  opacity: 0.75;
+}
+
+.empty-suit {
+  font-size: 18px;
+  font-weight: 800;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+.empty-suit-red {
+  fill: rgb(193 18 31);
+}
+
+.empty-suit-black {
+  fill: rgb(17 24 39);
+}
+
+.empty-suit-gold {
+  fill: rgb(245 158 11);
+  opacity: 0.9;
+}
+
+.dark .empty-card-back {
+  fill: rgb(31 31 35);
+  stroke: rgb(63 63 70);
+}
+
+.dark .empty-card-front {
+  fill: rgb(24 24 27);
+  stroke: rgb(214 40 57);
+}
+
+.dark .empty-suit-black {
+  fill: rgb(228 228 231);
+}
+
+.empty-history-title {
+  margin-top: 0.2rem;
+  color: rgb(39 39 42);
+  font-size: 0.92rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.dark .empty-history-title {
+  color: rgb(245 245 245);
+}
+
+.empty-history-helper {
+  margin-top: 0.12rem;
+  color: rgb(107 114 128);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.dark .empty-history-helper {
+  color: rgb(161 161 170);
+}
+
+.score-form {
+  border-color: rgb(229 231 235) !important;
+  background-color: rgb(255 255 255) !important;
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.9) inset,
+    0 8px 22px rgb(17 17 17 / 0.055);
+}
+
+.dark .score-form {
+  border-color: rgb(42 42 47) !important;
+  background-color: rgb(24 24 27) !important;
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.04) inset,
+    0 10px 28px rgb(0 0 0 / 0.24);
+}
+
+.score-input {
+  border-color: rgb(229 231 235);
+  background-color: rgb(250 250 250);
+  color: rgb(17 17 17);
+}
+
+.score-input:focus {
+  border-color: rgb(193 18 31);
+  box-shadow: 0 0 0 4px rgb(193 18 31 / 0.1);
+}
+
+.dark .score-input {
+  border-color: rgb(42 42 47);
+  background-color: rgb(11 11 12);
+  color: rgb(245 245 245);
+}
+
+.dark .score-input:focus {
+  border-color: rgb(214 40 57);
+  box-shadow: 0 0 0 4px rgb(214 40 57 / 0.16);
+}
+
+.score-input:disabled {
+  background-color: rgb(244 244 245);
+  color: rgb(113 113 122);
+}
+
+.dark .score-input:disabled {
+  background-color: rgb(31 31 35);
+  color: rgb(161 161 170);
+}
+
+.field-label {
+  color: rgb(39 39 42);
+}
+
+.dark .field-label {
+  color: rgb(245 245 245);
+}
+
+.icon-button {
+  border-color: rgb(229 231 235);
+  background-color: rgb(255 255 255);
+  color: rgb(17 17 17);
+}
+
+.icon-button:hover {
+  border-color: rgb(193 18 31);
+  color: rgb(193 18 31);
+}
+
+.dark .icon-button {
+  border-color: rgb(42 42 47);
+  background-color: rgb(24 24 27);
+  color: rgb(245 245 245);
+}
+
+.dark .icon-button:hover {
+  border-color: rgb(214 40 57);
+  color: rgb(248 113 113);
+}
+
+.primary-button {
+  background-color: rgb(193 18 31);
+  box-shadow: 0 8px 18px rgb(193 18 31 / 0.22);
+}
+
+.primary-button:hover {
+  background-color: rgb(176 0 32);
+}
+
+.dark .primary-button {
+  background-color: rgb(214 40 57);
+  box-shadow: 0 8px 20px rgb(214 40 57 / 0.18);
+}
+
+.dark .primary-button:hover {
+  background-color: rgb(190 18 60);
+}
+
+.secondary-button {
+  border-color: rgb(229 231 235);
+  background-color: rgb(250 250 250);
+  color: rgb(39 39 42);
+}
+
+.secondary-button:hover {
+  border-color: rgb(193 18 31);
+  color: rgb(193 18 31);
+}
+
+.dark .secondary-button {
+  border-color: rgb(42 42 47);
+  background-color: rgb(17 18 20);
+  color: rgb(228 228 231);
+}
+
+.dark .secondary-button:hover {
+  border-color: rgb(214 40 57);
+  color: rgb(254 202 202);
+}
+
+.reset-button {
+  border-color: rgb(254 202 202);
+  background-color: rgb(255 255 255);
+  color: rgb(185 28 28);
+}
+
+.reset-button:hover {
+  border-color: rgb(248 113 113);
+  background-color: rgb(254 242 242);
+  color: rgb(153 27 27);
+}
+
+.dark .reset-button {
+  border-color: rgb(127 29 29 / 0.72);
+  background-color: rgb(17 18 20);
+  color: rgb(254 202 202);
+}
+
+.dark .reset-button:hover {
+  border-color: rgb(248 113 113 / 0.72);
+  background-color: rgb(127 29 29 / 0.22);
+  color: rgb(254 226 226);
 }
 
 .modal-backdrop {
@@ -210,8 +711,8 @@
 
 @keyframes newest-round-highlight {
   0% {
-    background-color: rgb(236 253 245);
-    border-color: rgb(52 211 153);
+    background-color: rgb(255 241 242);
+    border-color: rgb(248 113 113);
   }
 
   100% {
@@ -226,14 +727,288 @@
 
 @keyframes newest-round-highlight-dark {
   0% {
-    background-color: rgb(6 78 59 / 0.45);
-    border-color: rgb(16 185 129 / 0.75);
+    background-color: rgb(127 29 29 / 0.34);
+    border-color: rgb(248 113 113 / 0.72);
   }
 
   100% {
     background-color: inherit;
     border-color: inherit;
   }
+}
+
+/* Final visual refinement: softer card-game identity without changing layout. */
+.app-root {
+  background:
+    radial-gradient(circle at 12% 0%, rgb(193 18 31 / 0.035), transparent 28%),
+    linear-gradient(180deg, rgb(250 250 250), rgb(247 247 248));
+}
+
+.dark .app-root {
+  background:
+    radial-gradient(circle at 12% 0%, rgb(214 40 57 / 0.08), transparent 30%),
+    linear-gradient(180deg, rgb(11 11 12), rgb(18 18 20));
+}
+
+.brand-suit {
+  border-radius: 0.55rem;
+  color: rgb(193 18 31);
+  box-shadow: 0 1px 8px rgb(17 17 17 / 0.045);
+}
+
+.score-card {
+  border-color: rgb(232 232 235);
+  background-color: rgb(255 255 255);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.95) inset,
+    0 6px 18px rgb(17 17 17 / 0.045);
+}
+
+.dark .score-card {
+  border-color: rgb(42 42 47);
+  background-color: rgb(31 31 35);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.035) inset,
+    0 8px 22px rgb(0 0 0 / 0.2);
+}
+
+.score-card::before {
+  width: 0.16rem;
+  opacity: 0.72;
+}
+
+.score-card-black::before {
+  background-color: rgb(39 39 42);
+  opacity: 0.58;
+}
+
+.dark .score-card-black::before {
+  background-color: rgb(161 161 170);
+  opacity: 0.25;
+}
+
+.score-card-suit {
+  inset-inline-end: 0.55rem;
+  bottom: -0.55rem;
+  font-size: clamp(3.15rem, 13vw, 4.25rem);
+  opacity: 0.035;
+  transform: rotate(-9deg);
+}
+
+.dark .score-card-suit {
+  opacity: 0.045;
+}
+
+.score-card-leading {
+  border-color: rgb(193 18 31 / 0.62);
+  box-shadow:
+    0 0 0 1px rgb(193 18 31 / 0.07),
+    0 8px 20px rgb(17 17 17 / 0.05);
+}
+
+.dark .score-card-leading {
+  border-color: rgb(214 40 57 / 0.7);
+  box-shadow:
+    0 0 0 1px rgb(214 40 57 / 0.12),
+    0 9px 24px rgb(0 0 0 / 0.24);
+}
+
+.leading-badge {
+  border-color: rgb(254 226 226);
+  background-color: rgb(255 245 245);
+  color: rgb(185 28 28);
+}
+
+.dark .leading-badge {
+  border-color: rgb(127 29 29 / 0.55);
+  background-color: rgb(127 29 29 / 0.18);
+  color: rgb(254 202 202);
+}
+
+.winner-alert-win {
+  border-color: rgb(187 247 208);
+  background: rgb(240 253 244);
+  color: rgb(22 101 52);
+}
+
+.dark .winner-alert-win {
+  border-color: rgb(34 197 94 / 0.34);
+  background: rgb(20 83 45 / 0.22);
+  color: rgb(187 247 208);
+}
+
+.winner-alert-loss {
+  border-color: rgb(254 202 202);
+  background-color: rgb(254 242 242);
+  color: rgb(153 27 27);
+}
+
+.dark .winner-alert-loss {
+  border-color: rgb(127 29 29 / 0.58);
+  background-color: rgb(127 29 29 / 0.22);
+  color: rgb(254 202 202);
+}
+
+.history-accent-line {
+  width: 0.18rem;
+  height: 1.2rem;
+  opacity: 0.9;
+}
+
+.history-suit {
+  width: 1.24rem;
+  height: 1.24rem;
+  border-color: rgb(232 232 235);
+  font-size: 0.78rem;
+  box-shadow: 0 1px 7px rgb(17 17 17 / 0.035);
+}
+
+.history-count {
+  border-color: rgb(232 232 235);
+  background-color: rgb(255 255 255);
+  color: rgb(82 82 91);
+  font-size: 0.72rem;
+}
+
+.history-row {
+  border-color: rgb(232 232 235);
+  background-color: rgb(255 255 255);
+  box-shadow: 0 4px 12px rgb(17 17 17 / 0.035);
+}
+
+.dark .history-row {
+  border-color: rgb(42 42 47);
+  background-color: rgb(31 31 35);
+  box-shadow: none;
+}
+
+.empty-history {
+  min-height: 8rem;
+  border-color: rgb(218 218 222);
+  background-color: rgb(255 255 255);
+  box-shadow: 0 5px 16px rgb(17 17 17 / 0.035);
+}
+
+.dark .empty-history {
+  border-color: rgb(42 42 47);
+  background-color: rgb(31 31 35);
+}
+
+.empty-history-illustration {
+  width: min(40vw, 8.25rem);
+  margin-bottom: 0.1rem;
+}
+
+.empty-card {
+  stroke-width: 1.8;
+}
+
+.empty-card-back {
+  fill: rgb(250 250 250);
+  stroke: rgb(218 218 222);
+}
+
+.empty-card-front {
+  fill: rgb(255 255 255);
+  stroke: rgb(193 18 31 / 0.82);
+}
+
+.empty-card-line {
+  stroke: rgb(245 158 11);
+  stroke-width: 1.8;
+  opacity: 0.62;
+}
+
+.empty-suit {
+  font-size: 16px;
+}
+
+.empty-suit-small {
+  font-size: 12px;
+  opacity: 0.52;
+}
+
+.empty-suit-red {
+  fill: rgb(193 18 31);
+}
+
+.empty-suit-black {
+  fill: rgb(39 39 42);
+}
+
+.empty-suit-gold {
+  fill: rgb(245 158 11);
+  font-size: 13px;
+  opacity: 0.72;
+}
+
+.empty-history-title {
+  color: rgb(39 39 42);
+}
+
+.empty-history-helper {
+  color: rgb(107 114 128);
+}
+
+.score-form {
+  border-color: rgb(232 232 235) !important;
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.95) inset,
+    0 6px 18px rgb(17 17 17 / 0.045);
+}
+
+.dark .score-form {
+  border-color: rgb(42 42 47) !important;
+  background-color: rgb(31 31 35) !important;
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.035) inset,
+    0 8px 22px rgb(0 0 0 / 0.2);
+}
+
+.score-input {
+  border-color: rgb(229 231 235);
+  background-color: rgb(250 250 250);
+}
+
+.score-input:focus {
+  border-color: rgb(193 18 31);
+  box-shadow: 0 0 0 3px rgb(193 18 31 / 0.1);
+}
+
+.primary-button {
+  border-color: rgb(193 18 31);
+  background-color: rgb(193 18 31);
+  box-shadow: 0 7px 16px rgb(193 18 31 / 0.18);
+}
+
+.dark .primary-button {
+  border-color: rgb(214 40 57);
+  background-color: rgb(214 40 57);
+  box-shadow: 0 7px 18px rgb(214 40 57 / 0.14);
+}
+
+.secondary-button {
+  box-shadow: 0 3px 10px rgb(17 17 17 / 0.025);
+}
+
+.dark .secondary-button {
+  background-color: rgb(24 24 27);
+  box-shadow: none;
+}
+
+.reset-button {
+  background-color: rgb(255 255 255);
+}
+
+.modal-backdrop {
+  background-color: rgb(24 24 27 / 0.32);
+}
+
+.confirm-modal {
+  border-color: rgb(232 232 235);
+  box-shadow:
+    0 18px 42px rgb(24 24 27 / 0.15),
+    0 2px 10px rgb(24 24 27 / 0.06);
 }
 
 @media (max-width: 430px) {
@@ -327,5 +1102,107 @@
     font-size: 0.84rem;
     line-height: 1.3;
     min-height: 2.3rem;
+  }
+}
+
+/* Final polish: balanced empty state, controlled accents, refined disabled controls. */
+.primary-button:disabled {
+  border: 1px solid rgb(229 231 235);
+  background-color: rgb(244 244 245);
+  color: rgb(113 113 122);
+  box-shadow: none;
+  opacity: 1;
+}
+
+.primary-button:disabled:hover {
+  background-color: rgb(244 244 245);
+}
+
+.dark .primary-button:disabled {
+  border-color: rgb(49 49 52);
+  background-color: rgb(39 39 42);
+  color: rgb(161 161 170);
+  box-shadow: none;
+  opacity: 1;
+}
+
+.dark .primary-button:disabled:hover {
+  background-color: rgb(39 39 42);
+}
+
+.secondary-button:disabled,
+.reset-button:disabled {
+  opacity: 1;
+  border-color: rgb(229 231 235);
+  background-color: rgb(250 250 250);
+  color: rgb(161 161 170);
+  box-shadow: none;
+}
+
+.dark .secondary-button:disabled,
+.dark .reset-button:disabled {
+  border-color: rgb(49 49 52);
+  background-color: rgb(31 31 35);
+  color: rgb(113 113 122);
+}
+
+.empty-history {
+  min-height: 6.85rem;
+  flex: 0 0 auto;
+  padding: 0.72rem 0.75rem 0.78rem;
+}
+
+.empty-history-illustration {
+  width: min(36vw, 7.5rem);
+  margin-bottom: 0;
+}
+
+.empty-history-title {
+  margin-top: 0.05rem;
+}
+
+.empty-history-helper {
+  margin-top: 0.05rem;
+}
+
+.score-card::before {
+  width: 0.12rem;
+  opacity: 0.56;
+}
+
+.score-card-black::before {
+  opacity: 0.46;
+}
+
+.dark .score-card::before {
+  opacity: 0.44;
+}
+
+.dark .score-card-black::before {
+  opacity: 0.22;
+}
+
+.history-accent-line {
+  width: 0.14rem;
+  opacity: 0.78;
+}
+
+.history-suit,
+.brand-suit {
+  box-shadow: 0 1px 6px rgb(17 17 17 / 0.032);
+}
+
+.history-row-new {
+  animation-duration: 850ms;
+}
+
+@media (max-width: 430px) {
+  .empty-history {
+    min-height: 6.35rem;
+    padding-block: 0.62rem;
+  }
+
+  .empty-history-illustration {
+    width: min(34vw, 6.9rem);
   }
 }
