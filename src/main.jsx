@@ -199,12 +199,22 @@ function App() {
     [rounds]
   );
 
-  const winner =
-    totals.us >= WINNING_SCORE
-      ? "us"
-      : totals.them >= WINNING_SCORE
-        ? "them"
-        : null;
+const winner = (() => {
+  const usReached = totals.us >= WINNING_SCORE;
+  const themReached = totals.them >= WINNING_SCORE;
+
+  if (!usReached && !themReached) {
+    return null;
+  }
+
+  if (usReached && themReached) {
+    if (totals.us > totals.them) return "us";
+    if (totals.them > totals.us) return "them";
+    return null;
+  }
+
+  return usReached ? "us" : "them";
+})();
   const isGameFinished = Boolean(winner);
   const leadingTeam =
     totals.us === totals.them ? null : totals.us > totals.them ? "us" : "them";
