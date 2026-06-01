@@ -349,9 +349,15 @@ const displayedRounds = useMemo(() => [...rounds].reverse(), [rounds]);
       <div className="app-shell mx-auto flex h-full w-full max-w-xl flex-col overflow-hidden px-3 py-2 sm:px-6 sm:py-5">
         <header className="app-header mb-2 flex items-center justify-between gap-3">
           <h1 className="app-title brand-title font-bold tracking-normal">
-            <span className="brand-suit" aria-hidden="true">
-              {activeSuit.symbol}
-            </span>
+            <span
+  className={[
+    "brand-suit",
+    `suit-${activeSuit.tone}`
+  ].join(" ")}
+  aria-hidden="true"
+>
+  {activeSuit.symbol}
+</span>
             صكتي
           </h1>
 
