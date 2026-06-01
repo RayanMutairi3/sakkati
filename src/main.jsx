@@ -131,14 +131,24 @@ function readStoredRounds() {
   try {
     const value = localStorage.getItem(STORAGE_KEYS.rounds);
     const rounds = value ? JSON.parse(value) : [];
+
     return Array.isArray(rounds)
-      ? rounds.filter(
-          (round) =>
-            Number.isFinite(round.us) &&
-            Number.isFinite(round.them) &&
-            round.us >= 0 &&
-            round.them >= 0
-        )
+      ? rounds
+          .filter(
+            (round) =>
+              Number.isFinite(round.us) &&
+              Number.isFinite(round.them) &&
+              round.us >= 0 &&
+              round.them >= 0
+          )
+          .map((round, index) => ({
+            ...round,
+            id: round.id ?? crypto.randomUUID(),
+            roundNumber:
+              Number.isFinite(round.roundNumber) && round.roundNumber > 0
+                ? round.roundNumber
+                : index + 1
+          }))
       : [];
   } catch {
     return [];
@@ -198,16 +208,7 @@ function App() {
   const isGameFinished = Boolean(winner);
   const leadingTeam =
     totals.us === totals.them ? null : totals.us > totals.them ? "us" : "them";
-  const displayedRounds = useMemo(
-    () =>
-      rounds
-        .map((round, index) => ({
-          ...round,
-          roundNumber: index + 1
-        }))
-        .reverse(),
-    [rounds]
-  );
+const displayedRounds = useMemo(() => [...rounds].reverse(), [rounds]);
   const suitIndex = Math.max(rounds.length - 1, 0) % SUIT_THEMES.length;
   const activeSuit = SUIT_THEMES[suitIndex];
   const teamSuits = TEAM_SUIT_PAIRS[suitIndex % TEAM_SUIT_PAIRS.length];
@@ -293,14 +294,19 @@ function App() {
       return;
     }
 
-    const round = {
-      id: crypto.randomUUID(),
-      us: us ?? 0,
-      them: them ?? 0
-    };
+    const roundId = crypto.randomUUID();
 
-    setRounds((currentRounds) => [...currentRounds, round]);
-    setHighlightedRoundId(round.id);
+    setRounds((currentRounds) => [
+      ...currentRounds,
+      {
+        id: roundId,
+        us: us ?? 0,
+        them: them ?? 0,
+        roundNumber: currentRounds.length + 1
+      }
+    ]);
+
+    setHighlightedRoundId(roundId);
     setForm({ us: "", them: "" });
     setError("");
   }
@@ -481,26 +487,57 @@ function App() {
           {rounds.length === 0 ? (
             <EmptyHistory suit={activeSuit} />
           ) : (
-            <ol className="history-list min-h-0 flex-1 space-y-2 overflow-y-auto pb-2">
-              {displayedRounds.map((round) => (
-                <li
-                  className={[
-                    "history-row flex items-center justify-between gap-3 rounded-lg border border-zinc-200 bg-white px-3 py-2 font-semibold shadow-sm transition-colors duration-300 dark:border-zinc-800 dark:bg-zinc-900",
-                    round.id === highlightedRoundId ? "history-row-new" : ""
-                  ]
-                    .filter(Boolean)
-                    .join(" ")}
-                  key={round.id}
-                  dir="rtl"
-                >
-                  <span className="shrink-0 text-zinc-500 dark:text-zinc-400">
-                    الصكة {round.roundNumber}
-                  </span>
-                  <span className="text-left text-zinc-950 dark:text-zinc-50">
-                    لنا {round.us} - لهم {round.them}
-                  </span>
-                </li>
-              ))}
+            <ol className="history-list min-h-0 flex-1 overflow-y-auto pb-2">
+              {displayedRounds.map((round) => {
+                const usWonRound = round.us > round.them;
+                const themWonRound = round.them > round.us;
+                const isDrawRound = round.us === round.them;
+
+                return (
+                  <li
+                    key={round.id}
+                    className={[
+                      "history-score-card",
+                      round.id === highlightedRoundId ? "history-row-new latest-round" : ""
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
+                    dir="rtl"
+                  >
+                    <div className="history-round-badge">
+                      الصكة {round.roundNumber}
+                    </div>
+
+                    <div className="history-score-line" aria-label={`الصكة ${round.roundNumber}: لنا ${round.us}، لهم ${round.them}`}>
+                      <div
+                        className={[
+                          "history-score-value history-score-us",
+                          usWonRound ? "round-us-winner" : "",
+                          isDrawRound ? "round-draw" : ""
+                        ]
+                          .filter(Boolean)
+                          .join(" ")}
+                      >
+                        {round.us}
+                      </div>
+
+                      <div className="history-score-divider" />
+
+                      <div
+                        className={[
+                          "history-score-value history-score-them",
+                          themWonRound ? "round-them-winner" : "",
+                          isDrawRound ? "round-draw" : ""
+                        ]
+                          .filter(Boolean)
+                          .join(" ")}
+                      >
+                        {round.them}
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
             </ol>
           )}
         </section>
